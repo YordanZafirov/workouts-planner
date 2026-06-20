@@ -13,12 +13,8 @@ export async function GET(request: NextRequest) {
     const userId = parseInt(session.user.id);
 
     const goals = await prisma.goal.findMany({ where: { userId } });
-    const schedules = await prisma.schedule.findMany({
-      where: { userId },
-      include: { workout: true },
-    });
 
-    // compute progress: count workouts in current week and month
+    // compute progress: count completed workouts in current week and month
     const now = new Date();
     const startOfWeek = new Date(now);
     const day = startOfWeek.getDay();
@@ -33,14 +29,22 @@ export async function GET(request: NextRequest) {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
     const weeklyCount = await prisma.workout.count({
-      where: { userId, date: { gte: startOfWeek, lt: endOfWeek } },
+      where: {
+        userId,
+        completed: true,
+        date: { gte: startOfWeek, lt: endOfWeek },
+      },
     });
 
     const monthlyCount = await prisma.workout.count({
-      where: { userId, date: { gte: startOfMonth, lt: endOfMonth } },
+      where: {
+        userId,
+        completed: true,
+        date: { gte: startOfMonth, lt: endOfMonth },
+      },
     });
 
-    return NextResponse.json({ goals, schedules, weeklyCount, monthlyCount });
+    return NextResponse.json({ goals, weeklyCount, monthlyCount });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
@@ -57,30 +61,40 @@ export async function POST(request: NextRequest) {
     const userId = parseInt(session.user.id);
     const body = await request.json();
 
-    // handle creating/updating goal targets
-    if (body.action === "saveGoal") {
-      const { type, target } = body;
-      const existing = await prisma.goal.findFirst({ where: { userId, type } });
-      if (existing) {
-        const updated = await prisma.goal.update({
-          where: { id: existing.id },
-          data: { target: Number(target) },
-        });
-        return NextResponse.json(updated);
-      }
-      const created = await prisma.goal.create({
-        data: { userId, type, target: Number(target) },
-      });
-      return NextResponse.json(created, { status: 201 });
-    }
+    if (body.action === "saveGoals") {
+      const weeklyTargetValue = Number(body.weeklyTarget ?? 0);
+      const monthlyTargetValue = Number(body.monthlyTarget ?? 0);
 
-    // handle creating a schedule assignment
-    if (body.action === "assign") {
-      const { workoutId, day } = body;
-      const created = await prisma.schedule.create({
-        data: { userId, workoutId: Number(workoutId), day: Number(day) },
+      const existingWeekly = await prisma.goal.findFirst({
+        where: { userId, type: "weekly" },
       });
-      return NextResponse.json(created, { status: 201 });
+      const existingMonthly = await prisma.goal.findFirst({
+        where: { userId, type: "monthly" },
+      });
+
+      if (existingWeekly) {
+        await prisma.goal.update({
+          where: { id: existingWeekly.id },
+          data: { target: weeklyTargetValue },
+        });
+      } else {
+        await prisma.goal.create({
+          data: { userId, type: "weekly", target: weeklyTargetValue },
+        });
+      }
+
+      if (existingMonthly) {
+        await prisma.goal.update({
+          where: { id: existingMonthly.id },
+          data: { target: monthlyTargetValue },
+        });
+      } else {
+        await prisma.goal.create({
+          data: { userId, type: "monthly", target: monthlyTargetValue },
+        });
+      }
+
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });

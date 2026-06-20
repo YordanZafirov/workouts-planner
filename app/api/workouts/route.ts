@@ -75,7 +75,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, title, description, date, duration, repetitions } =
+    const { id, title, description, date, duration, repetitions, completed } =
       await request.json();
 
     if (!id) {
@@ -106,6 +106,7 @@ export async function PATCH(request: NextRequest) {
         ...(repetitions !== undefined && {
           repetitions: repetitions ? parseInt(repetitions) : null,
         }),
+        ...(completed !== undefined && { completed: Boolean(completed) }),
       },
     });
 

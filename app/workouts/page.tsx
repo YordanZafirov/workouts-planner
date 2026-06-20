@@ -11,6 +11,7 @@ interface Workout {
   date: string;
   duration: number;
   repetitions?: number;
+  completed: boolean;
 }
 
 export default function WorkoutsPage() {
@@ -19,11 +20,7 @@ export default function WorkoutsPage() {
   const [editingWorkout, setEditingWorkout] = useState<Workout | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  useEffect(() => {
-    fetchWorkouts();
-  }, []);
-
-  const fetchWorkouts = async () => {
+  async function fetchWorkouts() {
     setLoading(true);
     try {
       const response = await fetch("/api/workouts");
@@ -36,9 +33,15 @@ export default function WorkoutsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleSubmit = async (data: any) => {
+  useEffect(() => {
+    void (async () => {
+      await fetchWorkouts();
+    })();
+  }, []);
+
+  const handleSubmit = async (data: Record<string, unknown>) => {
     setLoading(true);
     try {
       if (editingWorkout) {
@@ -72,22 +75,22 @@ export default function WorkoutsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm("Are you sure you want to delete this workout?")) {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/workouts?id=${id}`, {
-          method: "DELETE",
-        });
+  const handleFinish = async (id: number) => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/workouts", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, completed: true }),
+      });
 
-        if (response.ok) {
-          fetchWorkouts();
-        }
-      } catch (error) {
-        console.error("Error deleting workout:", error);
-      } finally {
-        setLoading(false);
+      if (response.ok) {
+        fetchWorkouts();
       }
+    } catch (error) {
+      console.error("Error marking workout finished:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,7 +158,7 @@ export default function WorkoutsPage() {
             <WorkoutList
               workouts={workouts}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onFinish={handleFinish}
               isLoading={loading}
             />
           )}

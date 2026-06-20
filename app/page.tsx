@@ -38,7 +38,7 @@ export default function Home() {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          Welcome, {session?.user?.email}!
+          Welcome, {session?.user?.name}!
         </h1>
         <p className="text-gray-600 text-lg">
           Stay on top of your fitness goals with our simple workout planner.
@@ -63,7 +63,7 @@ export default function Home() {
 
         <div className="bg-green-50 rounded-lg p-6 border border-green-200">
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Plan Your Week
+            Plan Your Goals
           </h3>
           <p className="text-gray-600 mb-4">
             Assign workouts to specific days of the week.

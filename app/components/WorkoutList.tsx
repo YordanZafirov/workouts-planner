@@ -7,19 +7,20 @@ interface Workout {
   date: string;
   duration: number;
   repetitions?: number;
+  completed: boolean;
 }
 
 interface WorkoutListProps {
   workouts: Workout[];
   onEdit: (workout: Workout) => void;
-  onDelete: (id: number) => void;
+  onFinish: (id: number) => void;
   isLoading?: boolean;
 }
 
 export default function WorkoutList({
   workouts,
   onEdit,
-  onDelete,
+  onFinish,
   isLoading,
 }: WorkoutListProps) {
   if (workouts.length === 0) {
@@ -58,11 +59,15 @@ export default function WorkoutList({
                 Edit
               </button>
               <button
-                onClick={() => onDelete(workout.id)}
-                disabled={isLoading}
-                className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 disabled:bg-gray-400 transition"
+                onClick={() => onFinish(workout.id)}
+                disabled={isLoading || workout.completed}
+                className={`px-3 py-1 text-sm rounded transition ${
+                  workout.completed
+                    ? "bg-emerald-500 text-white cursor-default"
+                    : "bg-blue-700 text-white hover:bg-blue-800"
+                }`}
               >
-                Delete
+                {workout.completed ? "Completed" : "Finish"}
               </button>
             </div>
           </div>

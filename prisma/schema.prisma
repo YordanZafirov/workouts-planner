@@ -29,6 +29,7 @@ model Workout {
   date        DateTime
   duration    Int // in minutes
   repetitions Int?
+  completed   Boolean    @default(false)
   userId      Int
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   schedules   Schedule[]
@@ -48,6 +49,8 @@ model Goal {
   target    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
 }
 
 model Schedule {
