@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching workouts:", error);
     return NextResponse.json(
       { error: "Failed to fetch workouts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (!title || !date || !duration) {
       return NextResponse.json(
         { error: "Title, date, and duration are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     console.error("Error creating workout:", error);
     return NextResponse.json(
       { error: "Failed to create workout" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -81,7 +81,7 @@ export async function PATCH(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: "Workout ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,7 +89,10 @@ export async function PATCH(request: NextRequest) {
       where: { id: parseInt(id) },
     });
 
-    if (!existingWorkout || existingWorkout.userId !== parseInt(session.user.id)) {
+    if (
+      !existingWorkout ||
+      existingWorkout.userId !== parseInt(session.user.id)
+    ) {
       return NextResponse.json({ error: "Workout not found" }, { status: 404 });
     }
 
@@ -100,7 +103,9 @@ export async function PATCH(request: NextRequest) {
         ...(description !== undefined && { description }),
         ...(date && { date: new Date(date) }),
         ...(duration && { duration: parseInt(duration) }),
-        ...(repetitions !== undefined && { repetitions: repetitions ? parseInt(repetitions) : null }),
+        ...(repetitions !== undefined && {
+          repetitions: repetitions ? parseInt(repetitions) : null,
+        }),
       },
     });
 
@@ -109,7 +114,7 @@ export async function PATCH(request: NextRequest) {
     console.error("Error updating workout:", error);
     return NextResponse.json(
       { error: "Failed to update workout" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -127,7 +132,7 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: "Workout ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -135,7 +140,10 @@ export async function DELETE(request: NextRequest) {
       where: { id: parseInt(id) },
     });
 
-    if (!existingWorkout || existingWorkout.userId !== parseInt(session.user.id)) {
+    if (
+      !existingWorkout ||
+      existingWorkout.userId !== parseInt(session.user.id)
+    ) {
       return NextResponse.json({ error: "Workout not found" }, { status: 404 });
     }
 
@@ -148,7 +156,7 @@ export async function DELETE(request: NextRequest) {
     console.error("Error deleting workout:", error);
     return NextResponse.json(
       { error: "Failed to delete workout" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

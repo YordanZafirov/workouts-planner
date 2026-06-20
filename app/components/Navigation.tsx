@@ -34,7 +34,9 @@ export default function Navigation() {
             <Link
               href="/workouts"
               className={`${
-                isActive("/workouts") ? "font-bold underline" : "hover:text-blue-100"
+                isActive("/workouts")
+                  ? "font-bold underline"
+                  : "hover:text-blue-100"
               }`}
             >
               Workouts
@@ -42,7 +44,9 @@ export default function Navigation() {
             <Link
               href="/goals"
               className={`${
-                isActive("/goals") ? "font-bold underline" : "hover:text-blue-100"
+                isActive("/goals")
+                  ? "font-bold underline"
+                  : "hover:text-blue-100"
               }`}
             >
               Goals
@@ -51,7 +55,9 @@ export default function Navigation() {
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="text-sm">{session.user?.name || session.user?.email}</span>
+          <span className="text-sm">
+            {session.user?.name || session.user?.email}
+          </span>
           <button
             onClick={() => signOut()}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition"

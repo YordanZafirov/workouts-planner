@@ -25,7 +25,9 @@ export default function WorkoutList({
   if (workouts.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">No workouts yet. Create one to get started!</p>
+        <p className="text-gray-500 text-lg">
+          No workouts yet. Create one to get started!
+        </p>
       </div>
     );
   }
@@ -67,10 +69,12 @@ export default function WorkoutList({
 
           <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 mt-4">
             <div>
-              <span className="font-medium">Date:</span> {new Date(workout.date).toLocaleDateString()}
+              <span className="font-medium">Date:</span>{" "}
+              {new Date(workout.date).toLocaleDateString()}
             </div>
             <div>
-              <span className="font-medium">Duration:</span> {workout.duration} min
+              <span className="font-medium">Duration:</span> {workout.duration}{" "}
+              min
             </div>
             {workout.repetitions && (
               <div>

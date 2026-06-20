@@ -103,7 +103,9 @@ export async function DELETE(request: NextRequest) {
 
     if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
-    const existing = await prisma.schedule.findUnique({ where: { id: Number(id) } });
+    const existing = await prisma.schedule.findUnique({
+      where: { id: Number(id) },
+    });
     if (!existing || existing.userId !== userId) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
