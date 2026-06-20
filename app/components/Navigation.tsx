@@ -22,7 +22,10 @@ export default function Navigation() {
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Left section: Brand + Navigation */}
         <div className="flex items-center gap-2">
-          <Link href="/" className="text-xl font-bold hover:text-blue-100 whitespace-nowrap">
+          <Link
+            href="/"
+            className="text-xl font-bold hover:text-blue-100 whitespace-nowrap"
+          >
             Workout Planner
           </Link>
 
